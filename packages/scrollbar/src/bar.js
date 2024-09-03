@@ -1,4 +1,4 @@
-import { on, off } from 'element-ui/src/utils/dom';
+import { on, off } from 'qingnio-ui/src/utils/dom';
 import { renderThumbStyle, BAR_MAP } from './util';
 
 /* istanbul ignore next */
@@ -12,43 +12,44 @@ export default {
   },
 
   computed: {
-    bar() {
+    bar () {
       return BAR_MAP[this.vertical ? 'vertical' : 'horizontal'];
     },
 
-    wrap() {
+    wrap () {
       return this.$parent.wrap;
     }
   },
 
-  render(h) {
+  render (h) {
     const { size, move, bar } = this;
 
     return (
       <div
-        class={ ['el-scrollbar__bar', 'is-' + bar.key] }
-        onMousedown={ this.clickTrackHandler } >
+        class={['el-scrollbar__bar', 'is-' + bar.key]}
+        onMousedown={this.clickTrackHandler} >
         <div
           ref="thumb"
           class="el-scrollbar__thumb"
-          onMousedown={ this.clickThumbHandler }
-          style={ renderThumbStyle({ size, move, bar }) }>
+          onMousedown={this.clickThumbHandler}
+          style={renderThumbStyle({ size, move, bar })}>
         </div>
       </div>
     );
   },
 
   methods: {
-    clickThumbHandler(e) {
+    clickThumbHandler (e) {
       // prevent click event of right button
-      if (e.ctrlKey || e.button === 2) {
+      if (e.ctrlKey || e.button === 2)
+      {
         return;
       }
       this.startDrag(e);
       this[this.bar.axis] = (e.currentTarget[this.bar.offset] - (e[this.bar.client] - e.currentTarget.getBoundingClientRect()[this.bar.direction]));
     },
 
-    clickTrackHandler(e) {
+    clickTrackHandler (e) {
       const offset = Math.abs(e.target.getBoundingClientRect()[this.bar.direction] - e[this.bar.client]);
       const thumbHalf = (this.$refs.thumb[this.bar.offset] / 2);
       const thumbPositionPercentage = ((offset - thumbHalf) * 100 / this.$el[this.bar.offset]);
@@ -56,7 +57,7 @@ export default {
       this.wrap[this.bar.scroll] = (thumbPositionPercentage * this.wrap[this.bar.scrollSize] / 100);
     },
 
-    startDrag(e) {
+    startDrag (e) {
       e.stopImmediatePropagation();
       this.cursorDown = true;
 
@@ -65,7 +66,7 @@ export default {
       document.onselectstart = () => false;
     },
 
-    mouseMoveDocumentHandler(e) {
+    mouseMoveDocumentHandler (e) {
       if (this.cursorDown === false) return;
       const prevPage = this[this.bar.axis];
 
@@ -78,7 +79,7 @@ export default {
       this.wrap[this.bar.scroll] = (thumbPositionPercentage * this.wrap[this.bar.scrollSize] / 100);
     },
 
-    mouseUpDocumentHandler(e) {
+    mouseUpDocumentHandler (e) {
       this.cursorDown = false;
       this[this.bar.axis] = 0;
       off(document, 'mousemove', this.mouseMoveDocumentHandler);
@@ -86,7 +87,7 @@ export default {
     }
   },
 
-  destroyed() {
+  destroyed () {
     off(document, 'mouseup', this.mouseUpDocumentHandler);
   }
 };

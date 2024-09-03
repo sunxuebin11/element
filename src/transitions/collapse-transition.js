@@ -1,7 +1,7 @@
-import { addClass, removeClass } from 'element-ui/src/utils/dom';
+import { addClass, removeClass } from 'qingnio-ui/src/utils/dom';
 
 class Transition {
-  beforeEnter(el) {
+  beforeEnter (el) {
     addClass(el, 'collapse-transition');
     if (!el.dataset) el.dataset = {};
 
@@ -13,13 +13,15 @@ class Transition {
     el.style.paddingBottom = 0;
   }
 
-  enter(el) {
+  enter (el) {
     el.dataset.oldOverflow = el.style.overflow;
-    if (el.scrollHeight !== 0) {
+    if (el.scrollHeight !== 0)
+    {
       el.style.height = el.scrollHeight + 'px';
       el.style.paddingTop = el.dataset.oldPaddingTop;
       el.style.paddingBottom = el.dataset.oldPaddingBottom;
-    } else {
+    } else
+    {
       el.style.height = '';
       el.style.paddingTop = el.dataset.oldPaddingTop;
       el.style.paddingBottom = el.dataset.oldPaddingBottom;
@@ -28,14 +30,14 @@ class Transition {
     el.style.overflow = 'hidden';
   }
 
-  afterEnter(el) {
+  afterEnter (el) {
     // for safari: remove class then reset height is necessary
     removeClass(el, 'collapse-transition');
     el.style.height = '';
     el.style.overflow = el.dataset.oldOverflow;
   }
 
-  beforeLeave(el) {
+  beforeLeave (el) {
     if (!el.dataset) el.dataset = {};
     el.dataset.oldPaddingTop = el.style.paddingTop;
     el.dataset.oldPaddingBottom = el.style.paddingBottom;
@@ -45,8 +47,9 @@ class Transition {
     el.style.overflow = 'hidden';
   }
 
-  leave(el) {
-    if (el.scrollHeight !== 0) {
+  leave (el) {
+    if (el.scrollHeight !== 0)
+    {
       // for safari: add class after set height, or it will jump to zero height suddenly, weired
       addClass(el, 'collapse-transition');
       el.style.height = 0;
@@ -55,7 +58,7 @@ class Transition {
     }
   }
 
-  afterLeave(el) {
+  afterLeave (el) {
     removeClass(el, 'collapse-transition');
     el.style.height = '';
     el.style.overflow = el.dataset.oldOverflow;
@@ -67,7 +70,7 @@ class Transition {
 export default {
   name: 'ElCollapseTransition',
   functional: true,
-  render(h, { children }) {
+  render (h, { children }) {
     const data = {
       on: new Transition()
     };

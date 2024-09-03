@@ -1,8 +1,8 @@
 // reference https://github.com/noeldelgado/gemini-scrollbar/blob/master/index.js
 
-import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event';
-import scrollbarWidth from 'element-ui/src/utils/scrollbar-width';
-import { toObject } from 'element-ui/src/utils/util';
+import { addResizeListener, removeResizeListener } from 'qingnio-ui/src/utils/resize-event';
+import scrollbarWidth from 'qingnio-ui/src/utils/scrollbar-width';
+import { toObject } from 'qingnio-ui/src/utils/util';
 import Bar from './bar';
 
 /* istanbul ignore next */
@@ -24,7 +24,7 @@ export default {
     }
   },
 
-  data() {
+  data () {
     return {
       sizeWidth: '0',
       sizeHeight: '0',
@@ -34,25 +34,29 @@ export default {
   },
 
   computed: {
-    wrap() {
+    wrap () {
       return this.$refs.wrap;
     }
   },
 
-  render(h) {
+  render (h) {
     let gutter = scrollbarWidth();
     let style = this.wrapStyle;
 
-    if (gutter) {
+    if (gutter)
+    {
       const gutterWith = `-${gutter}px`;
       const gutterStyle = `margin-bottom: ${gutterWith}; margin-right: ${gutterWith};`;
 
-      if (Array.isArray(this.wrapStyle)) {
+      if (Array.isArray(this.wrapStyle))
+      {
         style = toObject(this.wrapStyle);
         style.marginRight = style.marginBottom = gutterWith;
-      } else if (typeof this.wrapStyle === 'string') {
+      } else if (typeof this.wrapStyle === 'string')
+      {
         style += gutterStyle;
-      } else {
+      } else
+      {
         style = gutterStyle;
       }
     }
@@ -64,32 +68,34 @@ export default {
     const wrap = (
       <div
         ref="wrap"
-        style={ style }
-        onScroll={ this.handleScroll }
-        class={ [this.wrapClass, 'el-scrollbar__wrap', gutter ? '' : 'el-scrollbar__wrap--hidden-default'] }>
-        { [view] }
+        style={style}
+        onScroll={this.handleScroll}
+        class={[this.wrapClass, 'el-scrollbar__wrap', gutter ? '' : 'el-scrollbar__wrap--hidden-default']}>
+        {[view]}
       </div>
     );
     let nodes;
 
-    if (!this.native) {
+    if (!this.native)
+    {
       nodes = ([
         wrap,
         <Bar
-          move={ this.moveX }
-          size={ this.sizeWidth }></Bar>,
+          move={this.moveX}
+          size={this.sizeWidth}></Bar>,
         <Bar
           vertical
-          move={ this.moveY }
-          size={ this.sizeHeight }></Bar>
+          move={this.moveY}
+          size={this.sizeHeight}></Bar>
       ]);
-    } else {
+    } else
+    {
       nodes = ([
         <div
           ref="wrap"
-          class={ [this.wrapClass, 'el-scrollbar__wrap'] }
-          style={ style }>
-          { [view] }
+          class={[this.wrapClass, 'el-scrollbar__wrap']}
+          style={style}>
+          {[view]}
         </div>
       ]);
     }
@@ -97,14 +103,14 @@ export default {
   },
 
   methods: {
-    handleScroll() {
+    handleScroll () {
       const wrap = this.wrap;
 
       this.moveY = ((wrap.scrollTop * 100) / wrap.clientHeight);
       this.moveX = ((wrap.scrollLeft * 100) / wrap.clientWidth);
     },
 
-    update() {
+    update () {
       let heightPercentage, widthPercentage;
       const wrap = this.wrap;
       if (!wrap) return;
@@ -117,13 +123,13 @@ export default {
     }
   },
 
-  mounted() {
+  mounted () {
     if (this.native) return;
     this.$nextTick(this.update);
     !this.noresize && addResizeListener(this.$refs.resize, this.update);
   },
 
-  beforeDestroy() {
+  beforeDestroy () {
     if (this.native) return;
     !this.noresize && removeResizeListener(this.$refs.resize, this.update);
   }

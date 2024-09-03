@@ -5,7 +5,8 @@ process.on('exit', () => {
   console.log();
 });
 
-if (!process.argv[2]) {
+if (!process.argv[2])
+{
   console.error('[组件名]必填 - Please enter new component name');
   process.exit(1);
 }
@@ -96,7 +97,8 @@ export declare class El${ComponentName} extends ElementUIComponent {
 
 // 添加到 components.json
 const componentsFile = require('../../components.json');
-if (componentsFile[componentname]) {
+if (componentsFile[componentname])
+{
   console.error(`${componentname} 已存在.`);
   process.exit(1);
 }
@@ -112,8 +114,8 @@ fileSave(sassPath)
   .write(sassImportText, 'utf8')
   .end('\n');
 
-// 添加到 element-ui.d.ts
-const elementTsPath = path.join(__dirname, '../../types/element-ui.d.ts');
+// 添加到 qingnio-ui.d.ts
+const elementTsPath = path.join(__dirname, '../../types/qingnio-ui.d.ts');
 
 let elementTsText = `${fs.readFileSync(elementTsPath)}
 /** ${ComponentName} Component */

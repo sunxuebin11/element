@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import scrollbarWidth from 'element-ui/src/utils/scrollbar-width';
+import scrollbarWidth from 'qingnio-ui/src/utils/scrollbar-width';
 import { parseHeight } from './util';
 
 class TableLayout {
@@ -26,25 +26,30 @@ class TableLayout {
     this.fixedBodyHeight = null; // Table Height - Table Header Height - Scroll Bar Height
     this.gutterWidth = scrollbarWidth();
 
-    for (let name in options) {
-      if (options.hasOwnProperty(name)) {
+    for (let name in options)
+    {
+      if (options.hasOwnProperty(name))
+      {
         this[name] = options[name];
       }
     }
 
-    if (!this.table) {
+    if (!this.table)
+    {
       throw new Error('table is required for Table Layout');
     }
-    if (!this.store) {
+    if (!this.store)
+    {
       throw new Error('store is required for Table Layout');
     }
   }
 
-  updateScrollY() {
+  updateScrollY () {
     const height = this.height;
     if (height === null) return false;
     const bodyWrapper = this.table.bodyWrapper;
-    if (this.table.$el && bodyWrapper) {
+    if (this.table.$el && bodyWrapper)
+    {
       const body = bodyWrapper.querySelector('.el-table__body');
       const prevScrollY = this.scrollY;
       const scrollY = body.offsetHeight > this.bodyHeight;
@@ -54,7 +59,7 @@ class TableLayout {
     return false;
   }
 
-  setHeight(value, prop = 'height') {
+  setHeight (value, prop = 'height') {
     if (Vue.prototype.$isServer) return;
     const el = this.table.$el;
     value = parseHeight(value);
@@ -62,26 +67,30 @@ class TableLayout {
 
     if (!el && (value || value === 0)) return Vue.nextTick(() => this.setHeight(value, prop));
 
-    if (typeof value === 'number') {
+    if (typeof value === 'number')
+    {
       el.style[prop] = value + 'px';
       this.updateElsHeight();
-    } else if (typeof value === 'string') {
+    } else if (typeof value === 'string')
+    {
       el.style[prop] = value;
       this.updateElsHeight();
     }
   }
 
-  setMaxHeight(value) {
+  setMaxHeight (value) {
     this.setHeight(value, 'max-height');
   }
 
-  getFlattenColumns() {
+  getFlattenColumns () {
     const flattenColumns = [];
     const columns = this.table.columns;
     columns.forEach((column) => {
-      if (column.isColumnGroup) {
+      if (column.isColumnGroup)
+      {
         flattenColumns.push.apply(flattenColumns, column.columns);
-      } else {
+      } else
+      {
         flattenColumns.push(column);
       }
     });
@@ -89,7 +98,7 @@ class TableLayout {
     return flattenColumns;
   }
 
-  updateElsHeight() {
+  updateElsHeight () {
     if (!this.table.$ready) return Vue.nextTick(() => this.updateElsHeight());
     const { headerWrapper, appendWrapper, footerWrapper } = this.table.$refs;
     this.appendHeight = appendWrapper ? appendWrapper.offsetHeight : 0;
@@ -101,12 +110,14 @@ class TableLayout {
     const noneHeader = this.headerDisplayNone(headerTrElm);
 
     const headerHeight = this.headerHeight = !this.showHeader ? 0 : headerWrapper.offsetHeight;
-    if (this.showHeader && !noneHeader && headerWrapper.offsetWidth > 0 && (this.table.columns || []).length > 0 && headerHeight < 2) {
+    if (this.showHeader && !noneHeader && headerWrapper.offsetWidth > 0 && (this.table.columns || []).length > 0 && headerHeight < 2)
+    {
       return Vue.nextTick(() => this.updateElsHeight());
     }
     const tableHeight = this.tableHeight = this.table.$el.clientHeight;
     const footerHeight = this.footerHeight = footerWrapper ? footerWrapper.offsetHeight : 0;
-    if (this.height !== null) {
+    if (this.height !== null)
+    {
       this.bodyHeight = tableHeight - headerHeight - footerHeight + (footerWrapper ? 1 : 0);
     }
     this.fixedBodyHeight = this.scrollX ? (this.bodyHeight - this.gutterWidth) : this.bodyHeight;
@@ -117,11 +128,13 @@ class TableLayout {
     this.notifyObservers('scrollable');
   }
 
-  headerDisplayNone(elm) {
+  headerDisplayNone (elm) {
     if (!elm) return true;
     let headerChild = elm;
-    while (headerChild.tagName !== 'DIV') {
-      if (getComputedStyle(headerChild).display === 'none') {
+    while (headerChild.tagName !== 'DIV')
+    {
+      if (getComputedStyle(headerChild).display === 'none')
+      {
         return true;
       }
       headerChild = headerChild.parentElement;
@@ -129,7 +142,7 @@ class TableLayout {
     return false;
   }
 
-  updateColumnsWidth() {
+  updateColumnsWidth () {
     if (Vue.prototype.$isServer) return;
     const fit = this.fit;
     const bodyWidth = this.table.$el.clientWidth;
@@ -142,21 +155,25 @@ class TableLayout {
       if (typeof column.width === 'number' && column.realWidth) column.realWidth = null;
     });
 
-    if (flexColumns.length > 0 && fit) {
+    if (flexColumns.length > 0 && fit)
+    {
       flattenColumns.forEach((column) => {
         bodyMinWidth += column.width || column.minWidth || 80;
       });
 
       const scrollYWidth = this.scrollY ? this.gutterWidth : 0;
 
-      if (bodyMinWidth <= bodyWidth - scrollYWidth) { // DON'T HAVE SCROLL BAR
+      if (bodyMinWidth <= bodyWidth - scrollYWidth)
+      { // DON'T HAVE SCROLL BAR
         this.scrollX = false;
 
         const totalFlexWidth = bodyWidth - scrollYWidth - bodyMinWidth;
 
-        if (flexColumns.length === 1) {
+        if (flexColumns.length === 1)
+        {
           flexColumns[0].realWidth = (flexColumns[0].minWidth || 80) + totalFlexWidth;
-        } else {
+        } else
+        {
           const allColumnsWidth = flexColumns.reduce((prev, column) => prev + (column.minWidth || 80), 0);
           const flexWidthPerPixel = totalFlexWidth / allColumnsWidth;
           let noneFirstWidth = 0;
@@ -170,20 +187,24 @@ class TableLayout {
 
           flexColumns[0].realWidth = (flexColumns[0].minWidth || 80) + totalFlexWidth - noneFirstWidth;
         }
-      } else { // HAVE HORIZONTAL SCROLL BAR
+      } else
+      { // HAVE HORIZONTAL SCROLL BAR
         this.scrollX = true;
-        flexColumns.forEach(function(column) {
+        flexColumns.forEach(function (column) {
           column.realWidth = column.minWidth;
         });
       }
 
       this.bodyWidth = Math.max(bodyMinWidth, bodyWidth);
       this.table.resizeState.width = this.bodyWidth;
-    } else {
+    } else
+    {
       flattenColumns.forEach((column) => {
-        if (!column.width && !column.minWidth) {
+        if (!column.width && !column.minWidth)
+        {
           column.realWidth = 80;
-        } else {
+        } else
+        {
           column.realWidth = column.width || column.minWidth;
         }
 
@@ -196,9 +217,10 @@ class TableLayout {
 
     const fixedColumns = this.store.states.fixedColumns;
 
-    if (fixedColumns.length > 0) {
+    if (fixedColumns.length > 0)
+    {
       let fixedWidth = 0;
-      fixedColumns.forEach(function(column) {
+      fixedColumns.forEach(function (column) {
         fixedWidth += column.realWidth || column.width;
       });
 
@@ -206,9 +228,10 @@ class TableLayout {
     }
 
     const rightFixedColumns = this.store.states.rightFixedColumns;
-    if (rightFixedColumns.length > 0) {
+    if (rightFixedColumns.length > 0)
+    {
       let rightFixedWidth = 0;
-      rightFixedColumns.forEach(function(column) {
+      rightFixedColumns.forEach(function (column) {
         rightFixedWidth += column.realWidth || column.width;
       });
 
@@ -218,21 +241,23 @@ class TableLayout {
     this.notifyObservers('columns');
   }
 
-  addObserver(observer) {
+  addObserver (observer) {
     this.observers.push(observer);
   }
 
-  removeObserver(observer) {
+  removeObserver (observer) {
     const index = this.observers.indexOf(observer);
-    if (index !== -1) {
+    if (index !== -1)
+    {
       this.observers.splice(index, 1);
     }
   }
 
-  notifyObservers(event) {
+  notifyObservers (event) {
     const observers = this.observers;
     observers.forEach((observer) => {
-      switch (event) {
+      switch (event)
+      {
         case 'columns':
           observer.onColumnsChange(this);
           break;

@@ -1,9 +1,9 @@
-import { kebabCase } from 'element-ui/src/utils/util';
+import { kebabCase } from 'qingnio-ui/src/utils/util';
 /**
  * Show migrating guide in browser console.
  *
  * Usage:
- * import Migrating from 'element-ui/src/mixins/migrating';
+ * import Migrating from 'qingnio-ui/src/mixins/migrating';
  *
  * mixins: [Migrating]
  *
@@ -21,7 +21,7 @@ import { kebabCase } from 'element-ui/src/utils/util';
  *  },
  */
 export default {
-  mounted() {
+  mounted () {
     if (process.env.NODE_ENV === 'production') return;
     if (!this.$vnode) return;
     const { props = {}, events = {} } = this.getMigratingConfig();
@@ -29,22 +29,26 @@ export default {
     const definedProps = data.attrs || {};
     const definedEvents = componentOptions.listeners || {};
 
-    for (let propName in definedProps) {
+    for (let propName in definedProps)
+    {
       propName = kebabCase(propName); // compatible with camel case
-      if (props[propName]) {
+      if (props[propName])
+      {
         console.warn(`[Element Migrating][${this.$options.name}][Attribute]: ${props[propName]}`);
       }
     }
 
-    for (let eventName in definedEvents) {
+    for (let eventName in definedEvents)
+    {
       eventName = kebabCase(eventName); // compatible with camel case
-      if (events[eventName]) {
+      if (events[eventName])
+      {
         console.warn(`[Element Migrating][${this.$options.name}][Event]: ${events[eventName]}`);
       }
     }
   },
   methods: {
-    getMigratingConfig() {
+    getMigratingConfig () {
       return {
         props: {},
         events: {}

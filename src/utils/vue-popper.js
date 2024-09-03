@@ -1,9 +1,9 @@
 import Vue from 'vue';
 import {
   PopupManager
-} from 'element-ui/src/utils/popup';
+} from 'qingnio-ui/src/utils/popup';
 
-const PopperJS = Vue.prototype.$isServer ? function() {} : require('./popper');
+const PopperJS = Vue.prototype.$isServer ? function () { } : require('./popper');
 const stop = e => e.stopPropagation();
 
 /**
@@ -45,7 +45,7 @@ export default {
     },
     popperOptions: {
       type: Object,
-      default() {
+      default () {
         return {
           gpuAcceleration: false
         };
@@ -53,7 +53,7 @@ export default {
     }
   },
 
-  data() {
+  data () {
     return {
       showPopper: false,
       currentPlacement: ''
@@ -63,13 +63,13 @@ export default {
   watch: {
     value: {
       immediate: true,
-      handler(val) {
+      handler (val) {
         this.showPopper = val;
         this.$emit('input', val);
       }
     },
 
-    showPopper(val) {
+    showPopper (val) {
       if (this.disabled) return;
       val ? this.updatePopper() : this.destroyPopper();
       this.$emit('input', val);
@@ -77,10 +77,11 @@ export default {
   },
 
   methods: {
-    createPopper() {
+    createPopper () {
       if (this.$isServer) return;
       this.currentPlacement = this.currentPlacement || this.placement;
-      if (!/^(top|bottom|left|right)(-start|-end)?$/g.test(this.currentPlacement)) {
+      if (!/^(top|bottom|left|right)(-start|-end)?$/g.test(this.currentPlacement))
+      {
         return;
       }
 
@@ -90,14 +91,16 @@ export default {
 
       if (!reference &&
         this.$slots.reference &&
-        this.$slots.reference[0]) {
+        this.$slots.reference[0])
+      {
         reference = this.referenceElm = this.$slots.reference[0].elm;
       }
 
       if (!popper || !reference) return;
       if (this.visibleArrow) this.appendArrow(popper);
       if (this.appendToBody) document.body.appendChild(this.popperElm);
-      if (this.popperJS && this.popperJS.destroy) {
+      if (this.popperJS && this.popperJS.destroy)
+      {
         this.popperJS.destroy();
       }
 
@@ -110,39 +113,44 @@ export default {
         this.resetTransformOrigin();
         this.$nextTick(this.updatePopper);
       });
-      if (typeof options.onUpdate === 'function') {
+      if (typeof options.onUpdate === 'function')
+      {
         this.popperJS.onUpdate(options.onUpdate);
       }
       this.popperJS._popper.style.zIndex = PopupManager.nextZIndex();
       this.popperElm.addEventListener('click', stop);
     },
 
-    updatePopper() {
+    updatePopper () {
       const popperJS = this.popperJS;
-      if (popperJS) {
+      if (popperJS)
+      {
         popperJS.update();
-        if (popperJS._popper) {
+        if (popperJS._popper)
+        {
           popperJS._popper.style.zIndex = PopupManager.nextZIndex();
         }
-      } else {
+      } else
+      {
         this.createPopper();
       }
     },
 
-    doDestroy(forceDestroy) {
+    doDestroy (forceDestroy) {
       /* istanbul ignore if */
       if (!this.popperJS || (this.showPopper && !forceDestroy)) return;
       this.popperJS.destroy();
       this.popperJS = null;
     },
 
-    destroyPopper() {
-      if (this.popperJS) {
+    destroyPopper () {
+      if (this.popperJS)
+      {
         this.resetTransformOrigin();
       }
     },
 
-    resetTransformOrigin() {
+    resetTransformOrigin () {
       if (!this.transformOrigin) return;
       let placementMap = {
         top: 'bottom',
@@ -154,19 +162,22 @@ export default {
       let origin = placementMap[placement];
       this.popperJS._popper.style.transformOrigin = typeof this.transformOrigin === 'string'
         ? this.transformOrigin
-        : ['top', 'bottom'].indexOf(placement) > -1 ? `center ${ origin }` : `${ origin } center`;
+        : ['top', 'bottom'].indexOf(placement) > -1 ? `center ${origin}` : `${origin} center`;
     },
 
-    appendArrow(element) {
+    appendArrow (element) {
       let hash;
-      if (this.appended) {
+      if (this.appended)
+      {
         return;
       }
 
       this.appended = true;
 
-      for (let item in element.attributes) {
-        if (/^_v-/.test(element.attributes[item].name)) {
+      for (let item in element.attributes)
+      {
+        if (/^_v-/.test(element.attributes[item].name))
+        {
           hash = element.attributes[item].name;
           break;
         }
@@ -174,7 +185,8 @@ export default {
 
       const arrow = document.createElement('div');
 
-      if (hash) {
+      if (hash)
+      {
         arrow.setAttribute(hash, '');
       }
       arrow.setAttribute('x-arrow', '');
@@ -183,16 +195,17 @@ export default {
     }
   },
 
-  beforeDestroy() {
+  beforeDestroy () {
     this.doDestroy(true);
-    if (this.popperElm && this.popperElm.parentNode === document.body) {
+    if (this.popperElm && this.popperElm.parentNode === document.body)
+    {
       this.popperElm.removeEventListener('click', stop);
       document.body.removeChild(this.popperElm);
     }
   },
 
   // call destroy in keep-alive mode
-  deactivated() {
+  deactivated () {
     this.$options.beforeDestroy[0].call(this);
   }
 };

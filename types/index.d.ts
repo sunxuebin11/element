@@ -1,4 +1,4 @@
-export * from './element-ui'
+export * from './qingnio-ui'
 
-import * as ElementUI from './element-ui'
+import * as ElementUI from './qingnio-ui'
 export default ElementUI

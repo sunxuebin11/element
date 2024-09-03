@@ -43,10 +43,10 @@
   import HueSlider from './hue-slider';
   import AlphaSlider from './alpha-slider';
   import Predefine from './predefine';
-  import Popper from 'element-ui/src/utils/vue-popper';
-  import Locale from 'element-ui/src/mixins/locale';
-  import ElInput from 'element-ui/packages/input';
-  import ElButton from 'element-ui/packages/button';
+  import Popper from 'qingnio-ui/src/utils/vue-popper';
+  import Locale from 'qingnio-ui/src/mixins/locale';
+  import ElInput from 'qingnio-ui/packages/input';
+  import ElButton from 'qingnio-ui/packages/button';
 
   export default {
     name: 'el-color-picker-dropdown',

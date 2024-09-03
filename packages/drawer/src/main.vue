@@ -47,8 +47,8 @@
 </template>
 
 <script>
-import Popup from 'element-ui/src/utils/popup';
-import emitter from 'element-ui/src/mixins/emitter';
+import Popup from 'qingnio-ui/src/utils/popup';
+import emitter from 'qingnio-ui/src/mixins/emitter';
 
 export default {
   name: 'ElDrawer',

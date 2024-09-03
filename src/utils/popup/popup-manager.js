@@ -1,26 +1,28 @@
 import Vue from 'vue';
-import { addClass, removeClass } from 'element-ui/src/utils/dom';
+import { addClass, removeClass } from 'qingnio-ui/src/utils/dom';
 
 let hasModal = false;
 let hasInitZIndex = false;
 let zIndex;
 
-const getModal = function() {
+const getModal = function () {
   if (Vue.prototype.$isServer) return;
   let modalDom = PopupManager.modalDom;
-  if (modalDom) {
+  if (modalDom)
+  {
     hasModal = true;
-  } else {
+  } else
+  {
     hasModal = false;
     modalDom = document.createElement('div');
     PopupManager.modalDom = modalDom;
 
-    modalDom.addEventListener('touchmove', function(event) {
+    modalDom.addEventListener('touchmove', function (event) {
       event.preventDefault();
       event.stopPropagation();
     });
 
-    modalDom.addEventListener('click', function() {
+    modalDom.addEventListener('click', function () {
       PopupManager.doOnModalClick && PopupManager.doOnModalClick();
     });
   }
@@ -33,49 +35,54 @@ const instances = {};
 const PopupManager = {
   modalFade: true,
 
-  getInstance: function(id) {
+  getInstance: function (id) {
     return instances[id];
   },
 
-  register: function(id, instance) {
-    if (id && instance) {
+  register: function (id, instance) {
+    if (id && instance)
+    {
       instances[id] = instance;
     }
   },
 
-  deregister: function(id) {
-    if (id) {
+  deregister: function (id) {
+    if (id)
+    {
       instances[id] = null;
       delete instances[id];
     }
   },
 
-  nextZIndex: function() {
+  nextZIndex: function () {
     return PopupManager.zIndex++;
   },
 
   modalStack: [],
 
-  doOnModalClick: function() {
+  doOnModalClick: function () {
     const topItem = PopupManager.modalStack[PopupManager.modalStack.length - 1];
     if (!topItem) return;
 
     const instance = PopupManager.getInstance(topItem.id);
-    if (instance && instance.closeOnClickModal) {
+    if (instance && instance.closeOnClickModal)
+    {
       instance.close();
     }
   },
 
-  openModal: function(id, zIndex, dom, modalClass, modalFade) {
+  openModal: function (id, zIndex, dom, modalClass, modalFade) {
     if (Vue.prototype.$isServer) return;
     if (!id || zIndex === undefined) return;
     this.modalFade = modalFade;
 
     const modalStack = this.modalStack;
 
-    for (let i = 0, j = modalStack.length; i < j; i++) {
+    for (let i = 0, j = modalStack.length; i < j; i++)
+    {
       const item = modalStack[i];
-      if (item.id === id) {
+      if (item.id === id)
+      {
         return;
       }
     }
@@ -83,10 +90,12 @@ const PopupManager = {
     const modalDom = getModal();
 
     addClass(modalDom, 'v-modal');
-    if (this.modalFade && !hasModal) {
+    if (this.modalFade && !hasModal)
+    {
       addClass(modalDom, 'v-modal-enter');
     }
-    if (modalClass) {
+    if (modalClass)
+    {
       let classArr = modalClass.trim().split(/\s+/);
       classArr.forEach(item => addClass(modalDom, item));
     }
@@ -94,13 +103,16 @@ const PopupManager = {
       removeClass(modalDom, 'v-modal-enter');
     }, 200);
 
-    if (dom && dom.parentNode && dom.parentNode.nodeType !== 11) {
+    if (dom && dom.parentNode && dom.parentNode.nodeType !== 11)
+    {
       dom.parentNode.appendChild(modalDom);
-    } else {
+    } else
+    {
       document.body.appendChild(modalDom);
     }
 
-    if (zIndex) {
+    if (zIndex)
+    {
       modalDom.style.zIndex = zIndex;
     }
     modalDom.tabIndex = 0;
@@ -109,25 +121,32 @@ const PopupManager = {
     this.modalStack.push({ id: id, zIndex: zIndex, modalClass: modalClass });
   },
 
-  closeModal: function(id) {
+  closeModal: function (id) {
     const modalStack = this.modalStack;
     const modalDom = getModal();
 
-    if (modalStack.length > 0) {
+    if (modalStack.length > 0)
+    {
       const topItem = modalStack[modalStack.length - 1];
-      if (topItem.id === id) {
-        if (topItem.modalClass) {
+      if (topItem.id === id)
+      {
+        if (topItem.modalClass)
+        {
           let classArr = topItem.modalClass.trim().split(/\s+/);
           classArr.forEach(item => removeClass(modalDom, item));
         }
 
         modalStack.pop();
-        if (modalStack.length > 0) {
+        if (modalStack.length > 0)
+        {
           modalDom.style.zIndex = modalStack[modalStack.length - 1].zIndex;
         }
-      } else {
-        for (let i = modalStack.length - 1; i >= 0; i--) {
-          if (modalStack[i].id === id) {
+      } else
+      {
+        for (let i = modalStack.length - 1; i >= 0; i--)
+        {
+          if (modalStack[i].id === id)
+          {
             modalStack.splice(i, 1);
             break;
           }
@@ -135,12 +154,15 @@ const PopupManager = {
       }
     }
 
-    if (modalStack.length === 0) {
-      if (this.modalFade) {
+    if (modalStack.length === 0)
+    {
+      if (this.modalFade)
+      {
         addClass(modalDom, 'v-modal-leave');
       }
       setTimeout(() => {
-        if (modalStack.length === 0) {
+        if (modalStack.length === 0)
+        {
           if (modalDom.parentNode) modalDom.parentNode.removeChild(modalDom);
           modalDom.style.display = 'none';
           PopupManager.modalDom = undefined;
@@ -153,21 +175,23 @@ const PopupManager = {
 
 Object.defineProperty(PopupManager, 'zIndex', {
   configurable: true,
-  get() {
-    if (!hasInitZIndex) {
+  get () {
+    if (!hasInitZIndex)
+    {
       zIndex = zIndex || (Vue.prototype.$ELEMENT || {}).zIndex || 2000;
       hasInitZIndex = true;
     }
     return zIndex;
   },
-  set(value) {
+  set (value) {
     zIndex = value;
   }
 });
 
-const getTopPopup = function() {
+const getTopPopup = function () {
   if (Vue.prototype.$isServer) return;
-  if (PopupManager.modalStack.length > 0) {
+  if (PopupManager.modalStack.length > 0)
+  {
     const topPopup = PopupManager.modalStack[PopupManager.modalStack.length - 1];
     if (!topPopup) return;
     const instance = PopupManager.getInstance(topPopup.id);
@@ -176,13 +200,16 @@ const getTopPopup = function() {
   }
 };
 
-if (!Vue.prototype.$isServer) {
+if (!Vue.prototype.$isServer)
+{
   // handle `esc` key when the popup is shown
-  window.addEventListener('keydown', function(event) {
-    if (event.keyCode === 27) {
+  window.addEventListener('keydown', function (event) {
+    if (event.keyCode === 27)
+    {
       const topPopup = getTopPopup();
 
-      if (topPopup && topPopup.closeOnPressEscape) {
+      if (topPopup && topPopup.closeOnPressEscape)
+      {
         topPopup.handleClose
           ? topPopup.handleClose()
           : (topPopup.handleAction ? topPopup.handleAction('cancel') : topPopup.close());

@@ -1,14 +1,15 @@
-import { once, on } from 'element-ui/src/utils/dom';
-import { isMac } from 'element-ui/src/utils/util';
+import { once, on } from 'qingnio-ui/src/utils/dom';
+import { isMac } from 'qingnio-ui/src/utils/util';
 
 export default {
-  bind(el, binding, vnode) {
+  bind (el, binding, vnode) {
     let interval = null;
     let startTime;
     const maxIntervals = isMac() ? 100 : 200;
     const handler = () => vnode.context[binding.expression].apply();
     const clear = () => {
-      if (Date.now() - startTime < maxIntervals) {
+      if (Date.now() - startTime < maxIntervals)
+      {
         handler();
       }
       clearInterval(interval);

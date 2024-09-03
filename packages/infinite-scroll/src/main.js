@@ -4,17 +4,19 @@ import {
   isFunction,
   isUndefined,
   isDefined
-} from 'element-ui/src/utils/types';
+} from 'qingnio-ui/src/utils/types';
 import {
   getScrollContainer
-} from 'element-ui/src/utils/dom';
+} from 'qingnio-ui/src/utils/dom';
 
 const getStyleComputedProperty = (element, property) => {
-  if (element === window) {
+  if (element === window)
+  {
     element = document.documentElement;
   }
 
-  if (element.nodeType !== 1) {
+  if (element.nodeType !== 1)
+  {
     return [];
   }
   // NOTE: 1 DOM access here
@@ -68,7 +70,8 @@ const getScrollOptions = (el, vm) => {
     const { type, default: defaultValue } = option;
     let value = el.getAttribute(`infinite-scroll-${key}`);
     value = isUndefined(vm[value]) ? value : vm[value];
-    switch (type) {
+    switch (type)
+    {
       case Number:
         value = Number(value);
         value = Number.isNaN(value) ? defaultValue : value;
@@ -86,7 +89,7 @@ const getScrollOptions = (el, vm) => {
 
 const getElementTop = el => el.getBoundingClientRect().top;
 
-const handleScroll = function(cb) {
+const handleScroll = function (cb) {
   const { el, vm, container, observer } = this[scope];
   const { distance, disabled } = getScrollOptions(el, vm);
 
@@ -97,20 +100,24 @@ const handleScroll = function(cb) {
 
   let shouldTrigger = false;
 
-  if (container === el) {
+  if (container === el)
+  {
     // be aware of difference between clientHeight & offsetHeight & window.getComputedStyle().height
     const scrollBottom = container.scrollTop + getClientHeight(container);
     shouldTrigger = container.scrollHeight - scrollBottom <= distance;
-  } else {
+  } else
+  {
     const heightBelowTop = getOffsetHeight(el) + getElementTop(el) - getElementTop(container);
     const offsetHeight = getOffsetHeight(container);
     const borderBottom = Number.parseFloat(getStyleComputedProperty(container, 'borderBottomWidth'));
     shouldTrigger = heightBelowTop - offsetHeight + borderBottom <= distance;
   }
 
-  if (shouldTrigger && isFunction(cb)) {
+  if (shouldTrigger && isFunction(cb))
+  {
     cb.call(vm);
-  } else if (observer) {
+  } else if (observer)
+  {
     observer.disconnect();
     this[scope].observer = null;
   }
@@ -119,7 +126,7 @@ const handleScroll = function(cb) {
 
 export default {
   name: 'InfiniteScroll',
-  inserted(el, binding, vnode) {
+  inserted (el, binding, vnode) {
     const cb = binding.value;
 
     const vm = vnode.context;
@@ -130,19 +137,22 @@ export default {
 
     el[scope] = { el, vm, container, onScroll };
 
-    if (container) {
+    if (container)
+    {
       container.addEventListener('scroll', onScroll);
 
-      if (immediate) {
+      if (immediate)
+      {
         const observer = el[scope].observer = new MutationObserver(onScroll);
         observer.observe(container, { childList: true, subtree: true });
         onScroll();
       }
     }
   },
-  unbind(el) {
+  unbind (el) {
     const { container, onScroll } = el[scope];
-    if (container) {
+    if (container)
+    {
       container.removeEventListener('scroll', onScroll);
     }
   }

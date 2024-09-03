@@ -1,11 +1,11 @@
-import VuePopup from 'element-ui/src/utils/popup';
+import VuePopup from 'qingnio-ui/src/utils/popup';
 import { createTest, destroyVM } from '../util';
 
 const Popup = Object.assign({}, VuePopup, {
-  render(h) {
+  render (h) {
     return h('div');
   },
-  created() {
+  created () {
     this.rendered = true;
   }
 });
@@ -16,8 +16,8 @@ describe('Mixin:vue-popup', () => {
     const modals = document.querySelectorAll('.v-modal');
     [].forEach.call(modals, modal => {
       modal &&
-      modal.parentNode &&
-      modal.parentNode.removeChild(modal);
+        modal.parentNode &&
+        modal.parentNode.removeChild(modal);
     });
   });
   afterEach(() => {
@@ -25,8 +25,8 @@ describe('Mixin:vue-popup', () => {
     destroyVM(vm);
     const modal = document.querySelector('.v-modal');
     modal &&
-    modal.parentNode &&
-    modal.parentNode.removeChild(modal);
+      modal.parentNode &&
+      modal.parentNode.removeChild(modal);
   });
 
   it('show modal', () => {

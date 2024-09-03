@@ -1,6 +1,6 @@
 import { cellStarts, cellForced, defaultRenderCell, treeCellPrefix } from './config';
 import { mergeOptions, parseWidth, parseMinWidth, compose } from './util';
-import ElCheckbox from 'element-ui/packages/checkbox';
+import ElCheckbox from 'qingnio-ui/packages/checkbox';
 
 let columnIdSeed = 1;
 
@@ -50,16 +50,16 @@ export default {
     index: [Number, Function],
     sortOrders: {
       type: Array,
-      default() {
+      default () {
         return ['ascending', 'descending', null];
       },
-      validator(val) {
+      validator (val) {
         return val.every(order => ['ascending', 'descending', null].indexOf(order) > -1);
       }
     }
   },
 
-  data() {
+  data () {
     return {
       isSubColumn: false,
       columns: []
@@ -67,43 +67,46 @@ export default {
   },
 
   computed: {
-    owner() {
+    owner () {
       let parent = this.$parent;
-      while (parent && !parent.tableId) {
+      while (parent && !parent.tableId)
+      {
         parent = parent.$parent;
       }
       return parent;
     },
 
-    columnOrTableParent() {
+    columnOrTableParent () {
       let parent = this.$parent;
-      while (parent && !parent.tableId && !parent.columnId) {
+      while (parent && !parent.tableId && !parent.columnId)
+      {
         parent = parent.$parent;
       }
       return parent;
     },
 
-    realWidth() {
+    realWidth () {
       return parseWidth(this.width);
     },
 
-    realMinWidth() {
+    realMinWidth () {
       return parseMinWidth(this.minWidth);
     },
 
-    realAlign() {
+    realAlign () {
       return this.align ? 'is-' + this.align : null;
     },
 
-    realHeaderAlign() {
+    realHeaderAlign () {
       return this.headerAlign ? 'is-' + this.headerAlign : this.realAlign;
     }
   },
 
   methods: {
-    getPropsData(...props) {
+    getPropsData (...props) {
       return props.reduce((prev, cur) => {
-        if (Array.isArray(cur)) {
+        if (Array.isArray(cur))
+        {
           cur.forEach((key) => {
             prev[key] = this[key];
           });
@@ -112,42 +115,48 @@ export default {
       }, {});
     },
 
-    getColumnElIndex(children, child) {
+    getColumnElIndex (children, child) {
       return [].indexOf.call(children, child);
     },
 
-    setColumnWidth(column) {
-      if (this.realWidth) {
+    setColumnWidth (column) {
+      if (this.realWidth)
+      {
         column.width = this.realWidth;
       }
-      if (this.realMinWidth) {
+      if (this.realMinWidth)
+      {
         column.minWidth = this.realMinWidth;
       }
-      if (!column.minWidth) {
+      if (!column.minWidth)
+      {
         column.minWidth = 80;
       }
       column.realWidth = column.width === undefined ? column.minWidth : column.width;
       return column;
     },
 
-    setColumnForcedProps(column) {
+    setColumnForcedProps (column) {
       // 对于特定类型的 column，某些属性不允许设置
       const type = column.type;
       const source = cellForced[type] || {};
       Object.keys(source).forEach(prop => {
         let value = source[prop];
-        if (value !== undefined) {
+        if (value !== undefined)
+        {
           column[prop] = prop === 'className' ? `${column[prop]} ${value}` : value;
         }
       });
       return column;
     },
 
-    setColumnRenders(column) {
+    setColumnRenders (column) {
       // renderHeader 属性不推荐使用。
-      if (this.renderHeader) {
+      if (this.renderHeader)
+      {
         console.warn('[Element Warn][TableColumn]Comparing to render-header, scoped-slot header is easier to use. We recommend users to use scoped-slot header.');
-      } else if (column.type !== 'selection') {
+      } else if (column.type !== 'selection')
+      {
         column.renderHeader = (h, scope) => {
           const renderHeader = this.$scopedSlots.header;
           return renderHeader ? renderHeader(scope) : column.label;
@@ -156,24 +165,28 @@ export default {
 
       let originRenderCell = column.renderCell;
       // TODO: 这里的实现调整
-      if (column.type === 'expand') {
+      if (column.type === 'expand')
+      {
         // 对于展开行，renderCell 不允许配置的。在上一步中已经设置过，这里需要简单封装一下。
         column.renderCell = (h, data) => (<div class="cell">
-          { originRenderCell(h, data) }
+          {originRenderCell(h, data)}
         </div>);
         this.owner.renderExpanded = (h, data) => {
           return this.$scopedSlots.default
             ? this.$scopedSlots.default(data)
             : this.$slots.default;
         };
-      } else {
+      } else
+      {
         originRenderCell = originRenderCell || defaultRenderCell;
         // 对 renderCell 进行包装
         column.renderCell = (h, data) => {
           let children = null;
-          if (this.$scopedSlots.default) {
+          if (this.$scopedSlots.default)
+          {
             children = this.$scopedSlots.default(data);
-          } else {
+          } else
+          {
             children = originRenderCell(h, data);
           }
           const prefix = treeCellPrefix(h, data);
@@ -181,20 +194,21 @@ export default {
             class: 'cell',
             style: {}
           };
-          if (column.showOverflowTooltip) {
+          if (column.showOverflowTooltip)
+          {
             props.class += ' el-tooltip';
-            props.style = {width: (data.column.realWidth || data.column.width) - 1 + 'px'};
+            props.style = { width: (data.column.realWidth || data.column.width) - 1 + 'px' };
           }
-          return (<div { ...props }>
-            { prefix }
-            { children }
+          return (<div {...props}>
+            {prefix}
+            {children}
           </div>);
         };
       }
       return column;
     },
 
-    registerNormalWatchers() {
+    registerNormalWatchers () {
       const props = ['label', 'property', 'filters', 'filterMultiple', 'sortable', 'index', 'formatter', 'className', 'labelClassName', 'showOverflowTooltip'];
       // 一些属性具有别名
       const aliases = {
@@ -217,7 +231,7 @@ export default {
       });
     },
 
-    registerComplexWatchers() {
+    registerComplexWatchers () {
       const props = ['fixed'];
       const aliases = {
         realWidth: 'width',
@@ -244,14 +258,14 @@ export default {
     ElCheckbox
   },
 
-  beforeCreate() {
+  beforeCreate () {
     this.row = {};
     this.column = {};
     this.$index = 0;
     this.columnId = '';
   },
 
-  created() {
+  created () {
     const parent = this.columnOrTableParent;
     this.isSubColumn = this.owner !== parent;
     this.columnId = (parent.tableId || parent.columnId) + '_column_' + columnIdSeed++;
@@ -297,7 +311,7 @@ export default {
     this.registerComplexWatchers();
   },
 
-  mounted() {
+  mounted () {
     const owner = this.owner;
     const parent = this.columnOrTableParent;
     const children = this.isSubColumn ? parent.$el.children : parent.$refs.hiddenColumns.children;
@@ -306,13 +320,13 @@ export default {
     owner.store.commit('insertColumn', this.columnConfig, columnIndex, this.isSubColumn ? parent.columnConfig : null);
   },
 
-  destroyed() {
+  destroyed () {
     if (!this.$parent) return;
     const parent = this.$parent;
     this.owner.store.commit('removeColumn', this.columnConfig, this.isSubColumn ? parent.columnConfig : null);
   },
 
-  render(h) {
+  render (h) {
     // slots 也要渲染，需要计算合并表头
     return h('div', this.$slots.default);
   }

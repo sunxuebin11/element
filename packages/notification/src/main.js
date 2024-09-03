@@ -1,22 +1,22 @@
 import Vue from 'vue';
 import Main from './main.vue';
-import merge from 'element-ui/src/utils/merge';
-import { PopupManager } from 'element-ui/src/utils/popup';
-import { isVNode } from 'element-ui/src/utils/vdom';
+import merge from 'qingnio-ui/src/utils/merge';
+import { PopupManager } from 'qingnio-ui/src/utils/popup';
+import { isVNode } from 'qingnio-ui/src/utils/vdom';
 const NotificationConstructor = Vue.extend(Main);
 
 let instance;
 let instances = [];
 let seed = 1;
 
-const Notification = function(options) {
+const Notification = function (options) {
   if (Vue.prototype.$isServer) return;
   options = merge({}, options);
   const userOnClose = options.onClose;
   const id = 'notification_' + seed++;
   const position = options.position || 'top-right';
 
-  options.onClose = function() {
+  options.onClose = function () {
     Notification.close(id, userOnClose);
   };
 
@@ -24,7 +24,8 @@ const Notification = function(options) {
     data: options
   });
 
-  if (isVNode(options.message)) {
+  if (isVNode(options.message))
+  {
     instance.$slots.default = [options.message];
     options.message = 'REPLACED_BY_VNODE';
   }
@@ -47,7 +48,8 @@ const Notification = function(options) {
 
 ['success', 'warning', 'info', 'error'].forEach(type => {
   Notification[type] = options => {
-    if (typeof options === 'string' || isVNode(options)) {
+    if (typeof options === 'string' || isVNode(options))
+    {
       options = {
         message: options
       };
@@ -57,11 +59,12 @@ const Notification = function(options) {
   };
 });
 
-Notification.close = function(id, userOnClose) {
+Notification.close = function (id, userOnClose) {
   let index = -1;
   const len = instances.length;
   const instance = instances.filter((instance, i) => {
-    if (instance.id === id) {
+    if (instance.id === id)
+    {
       index = i;
       return true;
     }
@@ -69,7 +72,8 @@ Notification.close = function(id, userOnClose) {
   })[0];
   if (!instance) return;
 
-  if (typeof userOnClose === 'function') {
+  if (typeof userOnClose === 'function')
+  {
     userOnClose(instance);
   }
   instances.splice(index, 1);
@@ -77,16 +81,19 @@ Notification.close = function(id, userOnClose) {
   if (len <= 1) return;
   const position = instance.position;
   const removedHeight = instance.dom.offsetHeight;
-  for (let i = index; i < len - 1 ; i++) {
-    if (instances[i].position === position) {
+  for (let i = index; i < len - 1; i++)
+  {
+    if (instances[i].position === position)
+    {
       instances[i].dom.style[instance.verticalProperty] =
         parseInt(instances[i].dom.style[instance.verticalProperty], 10) - removedHeight - 16 + 'px';
     }
   }
 };
 
-Notification.closeAll = function() {
-  for (let i = instances.length - 1; i >= 0; i--) {
+Notification.closeAll = function () {
+  for (let i = instances.length - 1; i >= 0; i--)
+  {
     instances[i].close();
   }
 };

@@ -1,4 +1,4 @@
-import { getPropByPath } from 'element-ui/src/utils/util';
+import { getPropByPath } from 'qingnio-ui/src/utils/util';
 
 export const cellStarts = {
   default: {
@@ -28,56 +28,59 @@ export const cellStarts = {
 // 这些选项不应该被覆盖
 export const cellForced = {
   selection: {
-    renderHeader: function(h, { store }) {
+    renderHeader: function (h, { store }) {
       return <el-checkbox
-        disabled={ store.states.data && store.states.data.length === 0 }
-        indeterminate={ store.states.selection.length > 0 && !this.isAllSelected }
-        on-input={ this.toggleAllSelection }
-        value={ this.isAllSelected } />;
+        disabled={store.states.data && store.states.data.length === 0}
+        indeterminate={store.states.selection.length > 0 && !this.isAllSelected}
+        on-input={this.toggleAllSelection}
+        value={this.isAllSelected} />;
     },
-    renderCell: function(h, { row, column, isSelected, store, $index }) {
+    renderCell: function (h, { row, column, isSelected, store, $index }) {
       return <el-checkbox
-        nativeOn-click={ (event) => event.stopPropagation() }
-        value={ isSelected }
-        disabled={ column.selectable ? !column.selectable.call(null, row, $index) : false }
-        on-input={ () => { store.commit('rowSelectedChanged', row); } }
+        nativeOn-click={(event) => event.stopPropagation()}
+        value={isSelected}
+        disabled={column.selectable ? !column.selectable.call(null, row, $index) : false}
+        on-input={() => { store.commit('rowSelectedChanged', row); }}
       />;
     },
     sortable: false,
     resizable: false
   },
   index: {
-    renderHeader: function(h, { column }) {
+    renderHeader: function (h, { column }) {
       return column.label || '#';
     },
-    renderCell: function(h, { $index, column }) {
+    renderCell: function (h, { $index, column }) {
       let i = $index + 1;
       const index = column.index;
 
-      if (typeof index === 'number') {
+      if (typeof index === 'number')
+      {
         i = $index + index;
-      } else if (typeof index === 'function') {
+      } else if (typeof index === 'function')
+      {
         i = index($index);
       }
 
-      return <div>{ i }</div>;
+      return <div>{i}</div>;
     },
     sortable: false
   },
   expand: {
-    renderHeader: function(h, { column }) {
+    renderHeader: function (h, { column }) {
       return column.label || '';
     },
-    renderCell: function(h, { row, store, isExpanded }) {
+    renderCell: function (h, { row, store, isExpanded }) {
       const classes = ['el-table__expand-icon'];
-      if (isExpanded) {
+      if (isExpanded)
+      {
         classes.push('el-table__expand-icon--expanded');
       }
-      const callback = function(e) {
+      const callback = function (e) {
         e.stopPropagation();
         store.toggleRowExpansion(row);
       };
-      return (<div class={ classes }
+      return (<div class={classes}
         on-click={callback}>
         <i class='el-icon el-icon-arrow-right'></i>
       </div>);
@@ -88,36 +91,41 @@ export const cellForced = {
   }
 };
 
-export function defaultRenderCell(h, { row, column, $index }) {
+export function defaultRenderCell (h, { row, column, $index }) {
   const property = column.property;
   const value = property && getPropByPath(row, property).v;
-  if (column && column.formatter) {
+  if (column && column.formatter)
+  {
     return column.formatter(row, column, value, $index);
   }
   return value;
 }
 
-export function treeCellPrefix(h, { row, treeNode, store }) {
+export function treeCellPrefix (h, { row, treeNode, store }) {
   if (!treeNode) return null;
   const ele = [];
-  const callback = function(e) {
+  const callback = function (e) {
     e.stopPropagation();
     store.loadOrToggle(row);
   };
-  if (treeNode.indent) {
-    ele.push(<span class="el-table__indent" style={{'padding-left': treeNode.indent + 'px'}}></span>);
+  if (treeNode.indent)
+  {
+    ele.push(<span class="el-table__indent" style={{ 'padding-left': treeNode.indent + 'px' }}></span>);
   }
-  if (typeof treeNode.expanded === 'boolean' && !treeNode.noLazyChildren) {
+  if (typeof treeNode.expanded === 'boolean' && !treeNode.noLazyChildren)
+  {
     const expandClasses = ['el-table__expand-icon', treeNode.expanded ? 'el-table__expand-icon--expanded' : ''];
     let iconClasses = ['el-icon-arrow-right'];
-    if (treeNode.loading) {
+    if (treeNode.loading)
+    {
       iconClasses = ['el-icon-loading'];
     }
-    ele.push(<div class={ expandClasses }
-      on-click={ callback }>
-      <i class={ iconClasses }></i>
+    ele.push(<div class={expandClasses}
+      on-click={callback}>
+      <i class={iconClasses}></i>
     </div>);
-  } else {
+  } else
+  {
     ele.push(<span class="el-table__placeholder"></span>);
   }
   return ele;

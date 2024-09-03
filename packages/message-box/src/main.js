@@ -35,8 +35,8 @@ const defaults = {
 
 import Vue from 'vue';
 import msgboxVue from './main.vue';
-import merge from 'element-ui/src/utils/merge';
-import { isVNode } from 'element-ui/src/utils/vdom';
+import merge from 'qingnio-ui/src/utils/merge';
+import { isVNode } from 'qingnio-ui/src/utils/vdom';
 
 const MessageBoxConstructor = Vue.extend(msgboxVue);
 
@@ -44,23 +44,32 @@ let currentMsg, instance;
 let msgQueue = [];
 
 const defaultCallback = action => {
-  if (currentMsg) {
+  if (currentMsg)
+  {
     let callback = currentMsg.callback;
-    if (typeof callback === 'function') {
-      if (instance.showInput) {
+    if (typeof callback === 'function')
+    {
+      if (instance.showInput)
+      {
         callback(instance.inputValue, action);
-      } else {
+      } else
+      {
         callback(action);
       }
     }
-    if (currentMsg.resolve) {
-      if (action === 'confirm') {
-        if (instance.showInput) {
+    if (currentMsg.resolve)
+    {
+      if (action === 'confirm')
+      {
+        if (instance.showInput)
+        {
           currentMsg.resolve({ value: instance.inputValue, action });
-        } else {
+        } else
+        {
           currentMsg.resolve(action);
         }
-      } else if (currentMsg.reject && (action === 'cancel' || action === 'close')) {
+      } else if (currentMsg.reject && (action === 'cancel' || action === 'close'))
+      {
         currentMsg.reject(action);
       }
     }
@@ -76,22 +85,28 @@ const initInstance = () => {
 };
 
 const showNextMsg = () => {
-  if (!instance) {
+  if (!instance)
+  {
     initInstance();
   }
   instance.action = '';
 
-  if (!instance.visible || instance.closeTimer) {
-    if (msgQueue.length > 0) {
+  if (!instance.visible || instance.closeTimer)
+  {
+    if (msgQueue.length > 0)
+    {
       currentMsg = msgQueue.shift();
 
       let options = currentMsg.options;
-      for (let prop in options) {
-        if (options.hasOwnProperty(prop)) {
+      for (let prop in options)
+      {
+        if (options.hasOwnProperty(prop))
+        {
           instance[prop] = options[prop];
         }
       }
-      if (options.callback === undefined) {
+      if (options.callback === undefined)
+      {
         instance.callback = defaultCallback;
       }
 
@@ -100,14 +115,17 @@ const showNextMsg = () => {
         oldCb(action, instance);
         showNextMsg();
       };
-      if (isVNode(instance.message)) {
+      if (isVNode(instance.message))
+      {
         instance.$slots.default = [instance.message];
         instance.message = null;
-      } else {
+      } else
+      {
         delete instance.$slots.default;
       }
       ['modal', 'showClose', 'closeOnClickModal', 'closeOnPressEscape', 'closeOnHashChange'].forEach(prop => {
-        if (instance[prop] === undefined) {
+        if (instance[prop] === undefined)
+        {
           instance[prop] = true;
         }
       });
@@ -120,20 +138,24 @@ const showNextMsg = () => {
   }
 };
 
-const MessageBox = function(options, callback) {
+const MessageBox = function (options, callback) {
   if (Vue.prototype.$isServer) return;
-  if (typeof options === 'string' || isVNode(options)) {
+  if (typeof options === 'string' || isVNode(options))
+  {
     options = {
       message: options
     };
-    if (typeof arguments[1] === 'string') {
+    if (typeof arguments[1] === 'string')
+    {
       options.title = arguments[1];
     }
-  } else if (options.callback && !callback) {
+  } else if (options.callback && !callback)
+  {
     callback = options.callback;
   }
 
-  if (typeof Promise !== 'undefined') {
+  if (typeof Promise !== 'undefined')
+  {
     return new Promise((resolve, reject) => { // eslint-disable-line
       msgQueue.push({
         options: merge({}, defaults, MessageBox.defaults, options),
@@ -144,7 +166,8 @@ const MessageBox = function(options, callback) {
 
       showNextMsg();
     });
-  } else {
+  } else
+  {
     msgQueue.push({
       options: merge({}, defaults, MessageBox.defaults, options),
       callback: callback
@@ -159,10 +182,12 @@ MessageBox.setDefaults = defaults => {
 };
 
 MessageBox.alert = (message, title, options) => {
-  if (typeof title === 'object') {
+  if (typeof title === 'object')
+  {
     options = title;
     title = '';
-  } else if (title === undefined) {
+  } else if (title === undefined)
+  {
     title = '';
   }
   return MessageBox(merge({
@@ -175,10 +200,12 @@ MessageBox.alert = (message, title, options) => {
 };
 
 MessageBox.confirm = (message, title, options) => {
-  if (typeof title === 'object') {
+  if (typeof title === 'object')
+  {
     options = title;
     title = '';
-  } else if (title === undefined) {
+  } else if (title === undefined)
+  {
     title = '';
   }
   return MessageBox(merge({
@@ -190,10 +217,12 @@ MessageBox.confirm = (message, title, options) => {
 };
 
 MessageBox.prompt = (message, title, options) => {
-  if (typeof title === 'object') {
+  if (typeof title === 'object')
+  {
     options = title;
     title = '';
-  } else if (title === undefined) {
+  } else if (title === undefined)
+  {
     title = '';
   }
   return MessageBox(merge({

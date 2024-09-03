@@ -89,8 +89,8 @@ import Empty from '../packages/empty/index.js';
 import Descriptions from '../packages/descriptions/index.js';
 import DescriptionsItem from '../packages/descriptions-item/index.js';
 import Result from '../packages/result/index.js';
-import locale from 'element-ui/src/locale';
-import CollapseTransition from 'element-ui/src/transitions/collapse-transition';
+import locale from 'qingnio-ui/src/locale';
+import CollapseTransition from 'qingnio-ui/src/transitions/collapse-transition';
 
 const components = [
   Pagination,
@@ -180,7 +180,7 @@ const components = [
   CollapseTransition
 ];
 
-const install = function(Vue, opts = {}) {
+const install = function (Vue, opts = {}) {
   locale.use(opts.locale);
   locale.i18n(opts.i18n);
 
@@ -207,7 +207,8 @@ const install = function(Vue, opts = {}) {
 };
 
 /* istanbul ignore if */
-if (typeof window !== 'undefined' && window.Vue) {
+if (typeof window !== 'undefined' && window.Vue)
+{
   install(window.Vue);
 }
 

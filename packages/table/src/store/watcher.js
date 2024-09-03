@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import merge from 'element-ui/src/utils/merge';
+import merge from 'qingnio-ui/src/utils/merge';
 import { getKeysMap, getRowIdentity, getColumnById, getColumnByKey, orderBy, toggleRowStatus } from '../util';
 import expand from './expand';
 import current from './current';
@@ -7,7 +7,8 @@ import tree from './tree';
 
 const sortData = (data, states) => {
   const sortingColumn = states.sortingColumn;
-  if (!sortingColumn || typeof sortingColumn.sortable === 'string') {
+  if (!sortingColumn || typeof sortingColumn.sortable === 'string')
+  {
     return data;
   }
   return orderBy(data, states.sortProp, states.sortOrder, sortingColumn.sortMethod, sortingColumn.sortBy);
@@ -16,9 +17,11 @@ const sortData = (data, states) => {
 const doFlattenColumns = (columns) => {
   const result = [];
   columns.forEach((column) => {
-    if (column.children) {
+    if (column.children)
+    {
       result.push.apply(result, doFlattenColumns(column.children));
-    } else {
+    } else
+    {
       result.push(column);
     }
   });
@@ -26,7 +29,7 @@ const doFlattenColumns = (columns) => {
 };
 
 export default Vue.extend({
-  data() {
+  data () {
     return {
       states: {
         // 3.0 版本后要求必须设置该属性
@@ -76,19 +79,20 @@ export default Vue.extend({
 
   methods: {
     // 检查 rowKey 是否存在
-    assertRowKey() {
+    assertRowKey () {
       const rowKey = this.states.rowKey;
       if (!rowKey) throw new Error('[ElTable] prop row-key is required');
     },
 
     // 更新列
-    updateColumns() {
+    updateColumns () {
       const states = this.states;
       const _columns = states._columns || [];
       states.fixedColumns = _columns.filter((column) => column.fixed === true || column.fixed === 'left');
       states.rightFixedColumns = _columns.filter((column) => column.fixed === 'right');
 
-      if (states.fixedColumns.length > 0 && _columns[0] && _columns[0].type === 'selection' && !_columns[0].fixed) {
+      if (states.fixedColumns.length > 0 && _columns[0] && _columns[0].type === 'selection' && !_columns[0].fixed)
+      {
         _columns[0].fixed = true;
         states.fixedColumns.unshift(_columns[0]);
       }
@@ -109,65 +113,74 @@ export default Vue.extend({
     },
 
     // 更新 DOM
-    scheduleLayout(needUpdateColumns) {
-      if (needUpdateColumns) {
+    scheduleLayout (needUpdateColumns) {
+      if (needUpdateColumns)
+      {
         this.updateColumns();
       }
       this.table.debouncedUpdateLayout();
     },
 
     // 选择
-    isSelected(row) {
+    isSelected (row) {
       const { selection = [] } = this.states;
       return selection.indexOf(row) > -1;
     },
 
-    clearSelection() {
+    clearSelection () {
       const states = this.states;
       states.isAllSelected = false;
       const oldSelection = states.selection;
-      if (oldSelection.length) {
+      if (oldSelection.length)
+      {
         states.selection = [];
         this.table.$emit('selection-change', []);
       }
     },
 
-    cleanSelection() {
+    cleanSelection () {
       const states = this.states;
       const { data, rowKey, selection } = states;
       let deleted;
-      if (rowKey) {
+      if (rowKey)
+      {
         deleted = [];
         const selectedMap = getKeysMap(selection, rowKey);
         const dataMap = getKeysMap(data, rowKey);
-        for (let key in selectedMap) {
-          if (selectedMap.hasOwnProperty(key) && !dataMap[key]) {
+        for (let key in selectedMap)
+        {
+          if (selectedMap.hasOwnProperty(key) && !dataMap[key])
+          {
             deleted.push(selectedMap[key].row);
           }
         }
-      } else {
+      } else
+      {
         deleted = selection.filter(item => data.indexOf(item) === -1);
       }
-      if (deleted.length) {
+      if (deleted.length)
+      {
         const newSelection = selection.filter(item => deleted.indexOf(item) === -1);
         states.selection = newSelection;
         this.table.$emit('selection-change', newSelection.slice());
       }
     },
 
-    toggleRowSelection(row, selected, emitChange = true) {
+    toggleRowSelection (row, selected, emitChange = true) {
       const changed = toggleRowStatus(this.states.selection, row, selected);
-      if (changed) {
+      if (changed)
+      {
         const newSelection = (this.states.selection || []).slice();
         // 调用 API 修改选中值，不触发 select 事件
-        if (emitChange) {
+        if (emitChange)
+        {
           this.table.$emit('select', newSelection, row);
         }
         this.table.$emit('selection-change', newSelection);
       }
     },
 
-    _toggleAllSelection() {
+    _toggleAllSelection () {
       const states = this.states;
       const { data = [], selection } = states;
       // when only some rows are selected (but not all), select or deselect all of them
@@ -179,68 +192,82 @@ export default Vue.extend({
 
       let selectionChanged = false;
       data.forEach((row, index) => {
-        if (states.selectable) {
-          if (states.selectable.call(null, row, index) && toggleRowStatus(selection, row, value)) {
+        if (states.selectable)
+        {
+          if (states.selectable.call(null, row, index) && toggleRowStatus(selection, row, value))
+          {
             selectionChanged = true;
           }
-        } else {
-          if (toggleRowStatus(selection, row, value)) {
+        } else
+        {
+          if (toggleRowStatus(selection, row, value))
+          {
             selectionChanged = true;
           }
         }
       });
 
-      if (selectionChanged) {
+      if (selectionChanged)
+      {
         this.table.$emit('selection-change', selection ? selection.slice() : []);
       }
       this.table.$emit('select-all', selection);
     },
 
-    updateSelectionByRowKey() {
+    updateSelectionByRowKey () {
       const states = this.states;
       const { selection, rowKey, data } = states;
       const selectedMap = getKeysMap(selection, rowKey);
       data.forEach(row => {
         const rowId = getRowIdentity(row, rowKey);
         const rowInfo = selectedMap[rowId];
-        if (rowInfo) {
+        if (rowInfo)
+        {
           selection[rowInfo.index] = row;
         }
       });
     },
 
-    updateAllSelected() {
+    updateAllSelected () {
       const states = this.states;
       const { selection, rowKey, selectable } = states;
       // data 为 null 时，解构时的默认值会被忽略
       const data = states.data || [];
-      if (data.length === 0) {
+      if (data.length === 0)
+      {
         states.isAllSelected = false;
         return;
       }
 
       let selectedMap;
-      if (rowKey) {
+      if (rowKey)
+      {
         selectedMap = getKeysMap(selection, rowKey);
       }
-      const isSelected = function(row) {
-        if (selectedMap) {
+      const isSelected = function (row) {
+        if (selectedMap)
+        {
           return !!selectedMap[getRowIdentity(row, rowKey)];
-        } else {
+        } else
+        {
           return selection.indexOf(row) !== -1;
         }
       };
       let isAllSelected = true;
       let selectedCount = 0;
-      for (let i = 0, j = data.length; i < j; i++) {
+      for (let i = 0, j = data.length; i < j; i++)
+      {
         const item = data[i];
         const isRowSelectable = selectable && selectable.call(null, item, i);
-        if (!isSelected(item)) {
-          if (!selectable || isRowSelectable) {
+        if (!isSelected(item))
+        {
+          if (!selectable || isRowSelectable)
+          {
             isAllSelected = false;
             break;
           }
-        } else {
+        } else
+        {
           selectedCount++;
         }
       }
@@ -250,8 +277,9 @@ export default Vue.extend({
     },
 
     // 过滤与排序
-    updateFilters(columns, values) {
-      if (!Array.isArray(columns)) {
+    updateFilters (columns, values) {
+      if (!Array.isArray(columns))
+      {
         columns = [columns];
       }
       const states = this.states;
@@ -264,8 +292,9 @@ export default Vue.extend({
       return filters;
     },
 
-    updateSort(column, prop, order) {
-      if (this.states.sortingColumn && this.states.sortingColumn !== column) {
+    updateSort (column, prop, order) {
+      if (this.states.sortingColumn && this.states.sortingColumn !== column)
+      {
         this.states.sortingColumn.order = null;
       }
       this.states.sortingColumn = column;
@@ -273,7 +302,7 @@ export default Vue.extend({
       this.states.sortOrder = order;
     },
 
-    execFilter() {
+    execFilter () {
       const states = this.states;
       const { _data, filters } = states;
       let data = _data;
@@ -282,7 +311,8 @@ export default Vue.extend({
         const values = states.filters[columnId];
         if (!values || values.length === 0) return;
         const column = getColumnById(this.states, columnId);
-        if (column && column.filterMethod) {
+        if (column && column.filterMethod)
+        {
           data = data.filter((row) => {
             return values.some(value => column.filterMethod.call(null, value, row, column));
           });
@@ -292,20 +322,21 @@ export default Vue.extend({
       states.filteredData = data;
     },
 
-    execSort() {
+    execSort () {
       const states = this.states;
       states.data = sortData(states.filteredData, states);
     },
 
     // 根据 filters 与 sort 去过滤 data
-    execQuery(ignore) {
-      if (!(ignore && ignore.filter)) {
+    execQuery (ignore) {
+      if (!(ignore && ignore.filter))
+      {
         this.execFilter();
       }
       this.execSort();
     },
 
-    clearFilter(columnKeys) {
+    clearFilter (columnKeys) {
       const states = this.states;
       const { tableHeader, fixedTableHeader, rightFixedTableHeader } = this.table.$refs;
 
@@ -317,15 +348,18 @@ export default Vue.extend({
       const keys = Object.keys(panels);
       if (!keys.length) return;
 
-      if (typeof columnKeys === 'string') {
+      if (typeof columnKeys === 'string')
+      {
         columnKeys = [columnKeys];
       }
 
-      if (Array.isArray(columnKeys)) {
+      if (Array.isArray(columnKeys))
+      {
         const columns = columnKeys.map(key => getColumnByKey(states, key));
         keys.forEach(key => {
           const column = columns.find(col => col.id === key);
-          if (column) {
+          if (column)
+          {
             // TODO: 优化这里的代码
             panels[key].filteredValue = [];
           }
@@ -336,7 +370,8 @@ export default Vue.extend({
           silent: true,
           multi: true
         });
-      } else {
+      } else
+      {
         keys.forEach(key => {
           // TODO: 优化这里的代码
           panels[key].filteredValue = [];
@@ -351,7 +386,7 @@ export default Vue.extend({
       }
     },
 
-    clearSort() {
+    clearSort () {
       const states = this.states;
       if (!states.sortingColumn) return;
 
@@ -362,18 +397,20 @@ export default Vue.extend({
     },
 
     // 适配层，expand-row-keys 在 Expand 与 TreeTable 中都有使用
-    setExpandRowKeysAdapter(val) {
+    setExpandRowKeysAdapter (val) {
       // 这里会触发额外的计算，但为了兼容性，暂时这么做
       this.setExpandRowKeys(val);
       this.updateTreeExpandKeys(val);
     },
 
     // 展开行与 TreeTable 都要使用
-    toggleRowExpansionAdapter(row, expanded) {
+    toggleRowExpansionAdapter (row, expanded) {
       const hasExpandColumn = this.states.columns.some(({ type }) => type === 'expand');
-      if (hasExpandColumn) {
+      if (hasExpandColumn)
+      {
         this.toggleRowExpansion(row, expanded);
-      } else {
+      } else
+      {
         this.toggleTreeExpansion(row, expanded);
       }
     }

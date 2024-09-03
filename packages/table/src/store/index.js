@@ -1,9 +1,9 @@
 import Vue from 'vue';
 import Watcher from './watcher';
-import { arrayFind } from 'element-ui/src/utils/util';
+import { arrayFind } from 'qingnio-ui/src/utils/util';
 
 Watcher.prototype.mutations = {
-  setData(states, data) {
+  setData (states, data) {
     const dataInstanceChanged = states._data !== data;
     states._data = data;
 
@@ -12,13 +12,17 @@ Watcher.prototype.mutations = {
     // 没有使用 computed，而是手动更新部分数据 https://github.com/vuejs/vue/issues/6660#issuecomment-331417140
     this.updateCurrentRowData();
     this.updateExpandRows();
-    if (states.reserveSelection) {
+    if (states.reserveSelection)
+    {
       this.assertRowKey();
       this.updateSelectionByRowKey();
-    } else {
-      if (dataInstanceChanged) {
+    } else
+    {
+      if (dataInstanceChanged)
+      {
         this.clearSelection();
-      } else {
+      } else
+      {
         this.cleanSelection();
       }
     }
@@ -27,51 +31,61 @@ Watcher.prototype.mutations = {
     this.updateTableScrollY();
   },
 
-  insertColumn(states, column, index, parent) {
+  insertColumn (states, column, index, parent) {
     let array = states._columns;
-    if (parent) {
+    if (parent)
+    {
       array = parent.children;
       if (!array) array = parent.children = [];
     }
 
-    if (typeof index !== 'undefined') {
+    if (typeof index !== 'undefined')
+    {
       array.splice(index, 0, column);
-    } else {
+    } else
+    {
       array.push(column);
     }
 
-    if (column.type === 'selection') {
+    if (column.type === 'selection')
+    {
       states.selectable = column.selectable;
       states.reserveSelection = column.reserveSelection;
     }
 
-    if (this.table.$ready) {
+    if (this.table.$ready)
+    {
       this.updateColumns(); // hack for dynamics insert column
       this.scheduleLayout();
     }
   },
 
-  removeColumn(states, column, parent) {
+  removeColumn (states, column, parent) {
     let array = states._columns;
-    if (parent) {
+    if (parent)
+    {
       array = parent.children;
       if (!array) array = parent.children = [];
     }
-    if (array) {
+    if (array)
+    {
       array.splice(array.indexOf(column), 1);
     }
 
-    if (this.table.$ready) {
+    if (this.table.$ready)
+    {
       this.updateColumns(); // hack for dynamics remove column
       this.scheduleLayout();
     }
   },
 
-  sort(states, options) {
+  sort (states, options) {
     const { prop, order, init } = options;
-    if (prop) {
+    if (prop)
+    {
       const column = arrayFind(states.columns, column => column.property === prop);
-      if (column) {
+      if (column)
+      {
         column.order = order;
         this.updateSort(column, prop, order);
         this.commit('changeSortCondition', { init });
@@ -79,17 +93,19 @@ Watcher.prototype.mutations = {
     }
   },
 
-  changeSortCondition(states, options) {
+  changeSortCondition (states, options) {
     // 修复 pr https://github.com/ElemeFE/element/pull/15012 导致的 bug
     const { sortingColumn: column, sortProp: prop, sortOrder: order } = states;
-    if (order === null) {
+    if (order === null)
+    {
       states.sortingColumn = null;
       states.sortProp = null;
     }
     const ingore = { filter: true };
     this.execQuery(ingore);
 
-    if (!options || !(options.silent || options.init)) {
+    if (!options || !(options.silent || options.init))
+    {
       this.table.$emit('sort-change', {
         column,
         prop,
@@ -100,47 +116,50 @@ Watcher.prototype.mutations = {
     this.updateTableScrollY();
   },
 
-  filterChange(states, options) {
+  filterChange (states, options) {
     let { column, values, silent } = options;
     const newFilters = this.updateFilters(column, values);
 
     this.execQuery();
 
-    if (!silent) {
+    if (!silent)
+    {
       this.table.$emit('filter-change', newFilters);
     }
 
     this.updateTableScrollY();
   },
 
-  toggleAllSelection() {
+  toggleAllSelection () {
     this.toggleAllSelection();
   },
 
-  rowSelectedChanged(states, row) {
+  rowSelectedChanged (states, row) {
     this.toggleRowSelection(row);
     this.updateAllSelected();
   },
 
-  setHoverRow(states, row) {
+  setHoverRow (states, row) {
     states.hoverRow = row;
   },
 
-  setCurrentRow(states, row) {
+  setCurrentRow (states, row) {
     this.updateCurrentRow(row);
   }
 };
 
-Watcher.prototype.commit = function(name, ...args) {
+Watcher.prototype.commit = function (name, ...args) {
   const mutations = this.mutations;
-  if (mutations[name]) {
+  if (mutations[name])
+  {
     mutations[name].apply(this, [this.states].concat(args));
-  } else {
+  } else
+  {
     throw new Error(`Action not found: ${name}`);
   }
 };
 
-Watcher.prototype.updateTableScrollY = function() {
+Watcher.prototype.updateTableScrollY = function () {
   Vue.nextTick(this.table.updateScrollY);
 };
 

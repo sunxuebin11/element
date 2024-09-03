@@ -1,8 +1,8 @@
-import { t } from 'element-ui/src/locale';
+import { t } from 'qingnio-ui/src/locale';
 
 export default {
   methods: {
-    t(...args) {
+    t (...args) {
       return t.apply(this, args);
     }
   }

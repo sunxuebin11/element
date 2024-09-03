@@ -79,13 +79,13 @@
 </template>
 
 <script type="text/babel">
-  import Popup from 'element-ui/src/utils/popup';
-  import Locale from 'element-ui/src/mixins/locale';
-  import ElInput from 'element-ui/packages/input';
-  import ElButton from 'element-ui/packages/button';
-  import { addClass, removeClass } from 'element-ui/src/utils/dom';
-  import { t } from 'element-ui/src/locale';
-  import Dialog from 'element-ui/src/utils/aria-dialog';
+  import Popup from 'qingnio-ui/src/utils/popup';
+  import Locale from 'qingnio-ui/src/mixins/locale';
+  import ElInput from 'qingnio-ui/packages/input';
+  import ElButton from 'qingnio-ui/packages/button';
+  import { addClass, removeClass } from 'qingnio-ui/src/utils/dom';
+  import { t } from 'qingnio-ui/src/locale';
+  import Dialog from 'qingnio-ui/src/utils/aria-dialog';
 
   let messageBox;
   let typeMap = {

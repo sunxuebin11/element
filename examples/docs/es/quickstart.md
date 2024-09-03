@@ -22,15 +22,15 @@ En main.js:
 
 ```javascript
 import Vue from 'vue';
-import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
+import ElementUI from 'qingnio-ui';
+import 'qingnio-ui/lib/theme-chalk/index.css';
 import App from './App.vue';
 
 Vue.use(ElementUI);
 
 new Vue({
   el: '#app',
-  render: h => h(App)
+  render: (h) => h(App),
 });
 ```
 
@@ -55,7 +55,7 @@ Luego edite .babelrc:
     [
       "component",
       {
-        "libraryName": "element-ui",
+        "libraryName": "qingnio-ui",
         "styleLibraryName": "theme-chalk"
       }
     ]
@@ -67,7 +67,7 @@ Luego, si necesita Button y Select, edite main.js:
 
 ```javascript
 import Vue from 'vue';
-import { Button, Select } from 'element-ui';
+import { Button, Select } from 'qingnio-ui';
 import App from './App.vue';
 
 Vue.component(Button.name, Button);
@@ -79,7 +79,7 @@ Vue.component(Select.name, Select);
 
 new Vue({
   el: '#app',
-  render: h => h(App)
+  render: (h) => h(App),
 });
 ```
 
@@ -164,8 +164,8 @@ import {
   Loading,
   MessageBox,
   Message,
-  Notification
-} from 'element-ui';
+  Notification,
+} from 'qingnio-ui';
 
 Vue.use(Pagination);
 Vue.use(Dialog);
@@ -262,7 +262,7 @@ Importando Element completamente：
 
 ```js
 import Vue from 'vue';
-import Element from 'element-ui';
+import Element from 'qingnio-ui';
 Vue.use(Element, { size: 'small', zIndex: 3000 });
 ```
 
@@ -270,7 +270,7 @@ Importando Element parcialmente：
 
 ```js
 import Vue from 'vue';
-import { Button } from 'element-ui';
+import { Button } from 'qingnio-ui';
 
 Vue.prototype.$ELEMENT = { size: 'small', zIndex: 3000 };
 Vue.use(Button);
